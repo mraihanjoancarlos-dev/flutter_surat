@@ -32,7 +32,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - ganti_dengan_email_kamu@gmail.com
+          - mraihanjoancarlos@gmail.com
         notify:
           success: true
           failure: true
