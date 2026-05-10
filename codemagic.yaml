@@ -1,0 +1,38 @@
+workflows:
+  ios-free-provisioning:
+    name: iOS Free Provisioning (Unsigned)
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    working_directory: flutter_app
+    scripts:
+      - name: Get Flutter packages
+        script: flutter packages pub get
+      - name: Install pods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      - name: Add iOS platform (if not exists)
+        script: |
+          if [ ! -d "ios" ]; then
+            flutter create --platforms=ios .
+          fi
+      - name: Build unsigned IPA
+        script: |
+          flutter build ios --release --no-codesign
+          mkdir -p build/ios/ipa
+          cd build/ios/Release-iphoneos
+          mkdir -p Payload
+          cp -r Runner.app Payload/
+          zip -r ../ipa/Runner.ipa Payload
+    artifacts:
+      - flutter_app/build/ios/ipa/*.ipa
+      - flutter_app/flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - ganti_dengan_email_kamu@gmail.com
+        notify:
+          success: true
+          failure: true
